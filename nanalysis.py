@@ -1,13 +1,14 @@
-import matplotlib
-matplotlib.use('Agg')
+
+# coding: utf-8
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
+
 from time import sleep
+import support
 
 
-
-def rungekutta4d( func , argdict  = None, spoint = 0, epoint = 1, x0 = 0, y0 = 0, N = 1000 , var2 = False):
+def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 1, initial_value = 0.1, N = 1000 , var2 = False):
     """
     Returns t xpoints
     :param func         : func   : 微分方程式.
@@ -22,11 +23,9 @@ def rungekutta4d( func , argdict  = None, spoint = 0, epoint = 1, x0 = 0, y0 = 0
     :return float list of xpoints, float list of t
     """
 
-    if str( type( x0 ) )  == "<class 'float'>":
+    if str( type( initial_value ) )  == "<class 'float'>":
         x0 = [ x0 ]
     
-    if str( type( y0 ) )  == "<class 'float'>":
-        y0 = [ y0 ]
 
     
     h = ( epoint - spoint ) / N
@@ -36,7 +35,8 @@ def rungekutta4d( func , argdict  = None, spoint = 0, epoint = 1, x0 = 0, y0 = 0
     if var2 == False :
 
         xpoints = []
-        for xx0 in x0:
+        
+        for xx0 in initial_value:
 
             x = xx0
             xpoint = []
@@ -70,60 +70,40 @@ def rungekutta4d( func , argdict  = None, spoint = 0, epoint = 1, x0 = 0, y0 = 0
         xpoints = []
         ypoints = []
 
-        for xx0, yy0 in zip( x0 , y0 ):
-
+        if isinstance( initial_value, float ):
+            initial_value = [[ 0.1, 0.1 ]]
+         
+        for iv in initial_value:        
             xpoint = []
             ypoint = []
             
-            x = xx0
-            y = yy0
 
+            x = iv[ 0 ]
+            y = iv[ 1 ]
             for i, tt in enumerate( t ):
                 xpoint.append( x )
                 ypoint.append( y ) 
-
- 
-                if argdict:
-                    k1, _ = h * func( x, y, t, **argdict )
-                    _, l1 = h * func( x, y, t, **argdict )
+                                   
+                k1 = h * func( x, y, tt )[ 0 ]
+                l1 = h * func( x, y, tt )[ 1 ]
                     
-                    k2, _ = h *  func( x + l1 / 2, y + l1 / 2, t + h / 2, **argdict  ) 
-                    _, l2 = h *  func( x + k1 / 2, y + k1 / 2, t + h / 2, **argdict  ) 
+                k2 = h *  func( x + l1 / 2, y + l1 / 2,tt + h / 2  )[ 0 ] 
+                l2 = h *  func( x + k1 / 2, y + k1 / 2, tt + h / 2  )[ 1 ]
                 
-                    k3, _ = h *  func( x + l2 / 2, y + l2 / 2, t + h / 2, **argdict  ) 
-                    _, l3 = h *  func( x + k2 / 2, y + k2 / 2, t + h / 2, **argdict  ) 
-                
-                
-                    k4, _ = h * func( x + l3, y + l3, t + h, **argdict ) 
-                    _,l4 = h * func( x + k3, y + k3, t + h, **argdict ) 
-                
-                    x += ( k1 + 2.0 * k2 + 2.0 * k3 + k4 ) / 6
-                    y += ( l1 + 2.0 * l2 + 2.0 * l3 + l4 ) / 6
-           
-                else:
-
-                    
-                    k1 = h * func( x, y, t )[ 0 ]
-                    l1 = h * func( x, y, t )[ 1 ]
-                    
-                    k2 = h *  func( x + l1 / 2, y + l1 / 2, t + h / 2  )[ 0 ] 
-                    l2 = h *  func( x + k1 / 2, y + k1 / 2, t + h / 2  )[ 1 ]
-                
-                    k3 = h *  func( x + l2 / 2, y + l2 / 2, t + h / 2  )[ 0 ] 
-                    l3 = h *  func( x + k2 / 2, y + k2 / 2, t + h / 2  )[ 1 ]
+                k3 = h *  func( x + l2 / 2, y + l2 / 2, tt + h / 2  )[ 0 ] 
+                l3 = h *  func( x + k2 / 2, y + k2 / 2, tt + h / 2  )[ 1 ]
                 
                 
-                    k4 = h * func( x + l3, y + l3, t + h )[ 0 ] 
-                    l4 = h * func( x + k3, y + k3, t + h )[ 1 ] 
-                
-                    x += ( k1 + 2.0 * k2 + 2.0 * k3 + k4 ) / 6
-                    y += ( l1 + 2.0 * l2 + 2.0 * l3 + l4 ) / 6
-           
-
-
+                k4 = h * func( x + l3, y + l3, tt + h )[ 0 ] 
+                l4 = h * func( x + k3, y + k3, tt + h )[ 1 ] 
+                 
+                x += ( k1 + 2.0 * k2 + 2.0 * k3 + k4 ) / 6
+                y += ( l1 + 2.0 * l2 + 2.0 * l3 + l4 ) / 6
+                 
+        
             xpoints.append( xpoint ) 
             ypoints.append( ypoint ) 
-
+           
         return t,xpoints, ypoints
 
 def float_to_list( f ):
@@ -133,8 +113,10 @@ def float_to_list( f ):
     
     return f
 
+def reshape1n(x):
+    return np.array(x).reshape(-1,)
 
-def graph_plot( t, xpoints, ypoints = None, chapter = 0, func_name = None, graph_n = None, hlines = None, vlines = None, argdict = None, savefigOn = True, N = 1000, graph_label = None,  pointplot = None, Ntimegraphs = [1] ):
+def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_n = None, hlines = None, vlines = None, linelist = None, savefigOn = True, N = 1000, graph_label = None,  pointplot = None, ntimegraphs = 1  ):
 
         """
         Returns t xpoints
@@ -147,37 +129,48 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, func_name = None, graph
         :pram N             : int
         """
         
+        func_name = function.__class__.__name__ 
+        argdict = { key: val for key, val in function.__dict__.items() if str(key) != "t" and str(key) != "xpoints" and str(key) != "ypoints" }        
+        
         if ypoints:
             xpoints = float_to_list( xpoints )
             ypoints = float_to_list( ypoints )
 
-            for i in range( *Ntimegraphs ):
+            if ntimegraphs:
 
-                plt.title( 't-x,y x0 ={}, y0={}, argument : {}'.format( xpoints[i][0], ypoints[i][0], argdict ) )
-                plt.plot( t, xpoints[i], label = 'x' )
-                plt.plot( t, ypoints[i], label = 'y' )
+                for i, (x, y) in enumerate( zip ( xpoints, ypoints )):
+                    x = reshape1n( x )
+                    y = reshape1n( y )
+                    plt.title( 't-x,y x0 ={}, y0={}, argument : {}'.format( x[ 0 ],y[ 0 ]  , argdict ) )
+                    if i >= ntimegraphs:
+                        break
+                    
+                    plt.plot( t, x.reshape(-1,), label = 'x' )
+                    plt.plot( t, y.reshape(-1,), label = 'y' )
                 plt.grid()
                 plt.legend()
+                plt.show()
                 
                 if savefigOn:
                     plt.savefig( './img/chapter{}/tgraph{}.jpg'.format( chapter, i ) )
 
-                plt.close()   
+                  
                 
 
         else:
             xpoints = float_to_list( t )
             ypoints = float_to_list( xpoints )
 
+           
         
-
+        for x, y in zip(xpoints, ypoints):
+            x = reshape1n(x)
+            y = reshape1n(y)
+                
+            plt.plot( x, y, label = 'initial value (x, y) : ({}, {}), func argument :{}'.format( x[ 0 ], y[ 0 ], argdict )   )
+                
         
-        for x in xpoints:
-            for y in ypoints:
-
-                plt.plot ( x, y, label = 'initial value (x, y) : {:>5}{:>5}, func argument :{}'.format( x[ 0 ], y[ 0 ], argdict) )
-
-
+        
         plt.grid()
 
         dy = ( np.max( ypoints ) - np.min( ypoints ) ) / 30
@@ -207,18 +200,30 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, func_name = None, graph
 
 
 
-        plt.title( func_name , loc = 'left')
+        plt.title( function.__class__.__name__, loc = 'left')
 
-        if ypoints:
+        if ypoints and linelist[0]:
             plt.xlabel( "x( t )" )
             plt.ylabel( "y( t )" )
+            
+            p = np.arange( x_min, x_max, 0.01 )
+            
+            for l in linelist:
+                
+                q = l[ 0 ] * p + l[ 1 ]
+                plt.plot( p, q, linestyle = '--', label = '{}x+ {}'.format( l[0], l[1] ) )
+
+        elif ypoints:
+            plt.xlabel( "x( t )" )
+            plt.ylabel( "y( t )" )
+            
         else:
             plt.xlabel( " t " )
             plt.ylabel(" y( t ) ")
 
-        plt.legend( fontsize = 10, loc = 'lower right', bbox_to_anchor = ( 1, 1 ),  prop = { 'size' : 6 } )
+        plt.legend( fontsize = 5, loc = 'lower right', bbox_to_anchor = ( 1, 1 ),  prop = { 'size' : 6 } )
 
         if savefigOn == True:
             plt.savefig('./img/chapter{}/c{}g{}{}.jpg'.format( chapter,chapter, graph_n, func_name ) )
-
+        
         plt.show()

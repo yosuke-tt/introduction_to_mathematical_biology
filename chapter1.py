@@ -45,7 +45,7 @@ if __name__ == '__main__':
     vl = args.vline
     pp = support.seperateby2( args.pointplot )
 
-
+    iv = np.array(initial_value).reshape(-1)
     t, x = na.runge_kutta_val( graph[ graph_n ], argdict = fa, spoint = sp, epoint = ep, x0 = iv)
 
 
