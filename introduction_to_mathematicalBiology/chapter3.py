@@ -99,4 +99,4 @@ if __name__ == '__main__':
     
     t, xpoints, ypoints = function.get_values_rungekutta( sp = sp, ep = ep, initial_value = initial_value )
     
-    na.graph_plot( t, xpoints  ,ypoints , chapter = 2, function = function, hlines = hl, vlines = vl, linelist = linelist , savefigOn = saveoff, graph_n = graph_n, N = 1000, pointplot = pp)
+    na.graph_plot( t, xpoints  ,ypoints , chapter = 3 , function = function, hlines = hl, vlines = vl, linelist = linelist , savefigOn = saveoff, graph_n = graph_n, N = 1000, pointplot = pp)

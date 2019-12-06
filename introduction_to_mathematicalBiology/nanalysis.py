@@ -151,12 +151,15 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_
                     plt.plot( t, y.reshape(-1,), label = 'y' )
                 plt.grid()
                 plt.legend()
+               
+                
+                
+                if savefigOn == True:
+                    plt.savefig('./img/chapter{}/tgraph{}.jpg'.format( chapter, i ) )
+                
                 plt.show()
                 
-                if savefigOn:
-                    plt.savefig( './img/chapter{}/tgraph{}.jpg'.format( chapter, i ) )
-
-                  
+                                
                 
 
         else:
