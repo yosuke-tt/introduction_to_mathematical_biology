@@ -1,7 +1,21 @@
 import argparse
-
+import nanalysis as na
 # def to_num_list( list ):
 #     return [ float(f) for f in list]
+class BaseFunction():
+    
+    def __init__( self ):
+        self.xpoints = None
+        self.ypoints = None
+        self.t = None
+        
+
+    def get_values_rungekutta( self, sp = 0, ep = 100, initial_value = [0.1, 0.1] ):
+
+        self.t, self.xpoints, self.ypoints = na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, var2 = True )
+            
+        return  self.t, self.xpoints, self.ypoints
+
 
 
 
@@ -21,8 +35,8 @@ def get_base_args():
     """
     ps = argparse.ArgumentParser( description= 'function argument and value' )
 
-    ps.add_argument('--spoint', '-sp', type = int, default = 0, help = 'start point')
-    ps.add_argument('--epoint', '-ep', type = int, default = 1, help = 'end point')
+    ps.add_argument('--spoint', '-sp', type = float, default = 0, help = 'start point')
+    ps.add_argument('--epoint', '-ep', type = float, default = 1, help = 'end point')
     
     ps.add_argument('--n_epoch', '-n', type = int, help = 'epochs')
     ps.add_argument('--equation_number',  '-e', default = 1, type = int, help = 'equation_number')
@@ -35,7 +49,9 @@ def get_base_args():
     
     ps.add_argument('--pointplot', '-pp', nargs = '*', action = Seperateby2, default = None, help = 'draw hline')
     ps.add_argument('--line', '-l', nargs = '*', default = None ,  help = 'draw line[ a, b ]')
-    
+    ps.add_argument( '--n3dgraph', '-n3', type = int, default = 1,help = 'number of showing 3d graph')
+    ps.add_argument( '--ntimegraph', '-nt', type = int, default = 1,help = 'number of showing time graph')
+   #  ps.add_argument( '--param_graph', '-pg', action - 'store_true', help = 'show param graph') 
     
     return ps
 

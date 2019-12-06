@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 
 from time import sleep
 import support
+from mpl_toolkits.mplot3d import Axes3D
 
 
-def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 1, initial_value = 0.1, N = 1000 , var2 = False):
+def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 1, initial_value = 1, N = 1000 , var2 = False):
     """
     Returns t xpoints
     :param func         : func   : 微分方程式.
@@ -71,7 +72,7 @@ def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 1, initial_value =
         ypoints = []
 
         if isinstance( initial_value, float ):
-            initial_value = [[ 0.1, 0.1 ]]
+            initial_value = [[ 1, 1 ]]
          
         for iv in initial_value:        
             xpoint = []
@@ -87,7 +88,7 @@ def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 1, initial_value =
                 k1 = h * func( x, y, tt )[ 0 ]
                 l1 = h * func( x, y, tt )[ 1 ]
                     
-                k2 = h *  func( x + l1 / 2, y + l1 / 2,tt + h / 2  )[ 0 ] 
+                k2 = h *  func( x + l1 / 2, y + l1 / 2, tt + h / 2  )[ 0 ] 
                 l2 = h *  func( x + k1 / 2, y + k1 / 2, tt + h / 2  )[ 1 ]
                 
                 k3 = h *  func( x + l2 / 2, y + l2 / 2, tt + h / 2  )[ 0 ] 
@@ -99,7 +100,8 @@ def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 1, initial_value =
                  
                 x += ( k1 + 2.0 * k2 + 2.0 * k3 + k4 ) / 6
                 y += ( l1 + 2.0 * l2 + 2.0 * l3 + l4 ) / 6
-                 
+                
+            
         
             xpoints.append( xpoint ) 
             ypoints.append( ypoint ) 
@@ -116,7 +118,7 @@ def float_to_list( f ):
 def reshape1n(x):
     return np.array(x).reshape(-1,)
 
-def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_n = None, hlines = None, vlines = None, linelist = None, savefigOn = True, N = 1000, graph_label = None,  pointplot = None, ntimegraphs = 1  ):
+def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_n = None, hlines = None, vlines = None, linelist = None, savefigOn = True, N = 1000, graph_label = None,  pointplot = None, ntimegraphs = 1, n3dgraphs = 1  ):
 
         """
         Returns t xpoints
@@ -168,10 +170,10 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_
             y = reshape1n(y)
                 
             plt.plot( x, y, label = 'initial value (x, y) : ({}, {}), func argument :{}'.format( x[ 0 ], y[ 0 ], argdict )   )
-                
         
         
-        plt.grid()
+        
+        
 
         dy = ( np.max( ypoints ) - np.min( ypoints ) ) / 30
         dx = ( np.max( xpoints ) - np.min( xpoints ) ) / 30
@@ -179,25 +181,15 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_
         ddx = ( np.max( xpoints ) - np.min( xpoints ) ) / 10
         y_max, y_min = np.max( ypoints ) + dy, np.min( ypoints ) - dy
         x_max, x_min = np.max( xpoints ) + dx, np.min( xpoints ) - dx
-
+        
+   
         plt.xlim( xmin = x_min, xmax = x_max )
         plt.ylim( ymin = y_min, ymax = y_max )
 
-        plt.hlines( y = 0.0, xmin = x_min, xmax = x_max, colors = 'k', linewidths = 2)
-        plt.vlines( x = 0.0, ymin = y_min, ymax = y_max, colors = 'k', linewidths = 2)
-
-        if hlines:
-            plt.hlines( y = hlines, xmin = x_min, xmax = x_max,colors = 'k', linewidths = 2, alpha = 0.8, label = 'hlines: {}'.format( hlines ) )
-            plt.yticks( list( np.arange( y_min, y_max, ddy ) ) + hlines)
-
-        if vlines:
-            plt.vlines( x = vlines, ymin = y_min, ymax = y_max, colors = 'k', linewidths = 2, alpha = 0.8, label = 'vlines: {}'.format( vlines ) )
-            plt.xticks( list(np.arange( x_min, x_max, ddx )) + vlines)
-
-        if pointplot:
-            for  p in pointplot:
-                plt.scatter( p[0], p[1], s = 20, c = 'r', marker = 'o',label = '{}'.format( p ) )
-
+        if not hlines:
+            hlines = []
+        if not vlines:
+            vlines = []
 
 
         plt.title( function.__class__.__name__, loc = 'left')
@@ -209,9 +201,7 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_
             p = np.arange( x_min, x_max, 0.01 )
             
             for l in linelist:
-                
-                q = l[ 0 ] * p + l[ 1 ]
-                plt.plot( p, q, linestyle = '--', label = '{}x+ {}'.format( l[0], l[1] ) )
+                plt.plot()
 
         elif ypoints:
             plt.xlabel( "x( t )" )
@@ -220,10 +210,51 @@ def graph_plot( t, xpoints, ypoints = None, chapter = 0, function = None, graph_
         else:
             plt.xlabel( " t " )
             plt.ylabel(" y( t ) ")
+        
+        
+        plt.hlines( y = 0.0, xmin = x_min, xmax = x_max, colors = 'k', linewidths = 2)
+        plt.vlines( x = 0.0, ymin = y_min, ymax = y_max, colors = 'k', linewidths = 2)
 
+        if hlines:
+            plt.hlines( y = hlines, xmin = x_min, xmax = x_max,colors = 'lightpink', linewidths = 2, alpha = 0.8, label = 'hlines: {}'.format( hlines ) )
+            plt.yticks( list( np.arange( y_min, y_max, ddy ) ) + hlines)
+
+        if vlines:
+            plt.vlines( x = vlines, ymin = y_min, ymax = y_max, colors = 'lightpink', linewidths = 2, alpha = 0.8, label = 'vlines: {}'.format( vlines ) )
+            plt.xticks( list(np.arange( x_min, x_max, ddx )) + vlines)
+
+        if pointplot:
+            for  p in pointplot:
+                plt.scatter( p[0], p[1], s = 20, c = 'r', marker = 'o',label = '{}'.format( p ) )
+
+
+        plt.grid()
         plt.legend( fontsize = 5, loc = 'lower right', bbox_to_anchor = ( 1, 1 ),  prop = { 'size' : 6 } )
 
         if savefigOn == True:
             plt.savefig('./img/chapter{}/c{}g{}{}.jpg'.format( chapter,chapter, graph_n, func_name ) )
         
         plt.show()
+
+
+        for i, ( x, y ) in enumerate( zip( xpoints, ypoints ) ):
+                
+            if i >= n3dgraphs:
+                break
+                
+            X, Y = np.meshgrid( x, y )
+            
+            if getattr( function, "get_potential" )( X, Y ):
+                
+                fig = plt.figure( figsize = ( 8, 8 ) )
+                ax = fig.add_subplot( 111, projection = "3d" )
+
+                Z = getattr( function, "get_potential" )( X, Y )
+
+                ax.plot_surface( X, Y, Z ) 
+                   
+                if savefigOn == True:
+                    plt.savefig('./img/chapter{}/fig3D{}_c{}g{}{}.jpg'.format( chapter, i ,chapter, graph_n, func_name ) )
+                plt.show()
+            else :
+                break
