@@ -7,7 +7,7 @@
 
 
 The reason for making this program is that in the following books, only mathematical formulas and graphs were on board, so I wanted to be able to see changes when changing parameters.
-[数理生物学入門 生物社会のダイナミクスを探る]:https://www.amazon.co.jp/%E6%95%B0%E7%90%86%E7%94%9F%E7%89%A9%E5%AD%A6%E5%85%A5%E9%96%80%E2%80%95%E7%94%9F%E7%89%A9%E7%A4%BE%E4%BC%9A%E3%81%AE%E3%83%80%E3%82%A4%E3%83%8A%E3%83%9F%E3%83%83%E3%82%AF%E3%82%B9%E3%82%92%E6%8E%A2%E3%82%8B-%E5%B7%8C%E4%BD%90-%E5%BA%B8/dp/4320054857/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&keywords=%E6%95%B0%E7%90%86%E7%94%9F%E7%89%A9%E5%AD%A6%E5%85%A5%E9%96%80&qid=1575634765&sr=8-1
+[数理生物学入門 生物社会のダイナミクスを探る]:https://www.amazon.co.jp/%E6%95%B0%E7%90%86%E7%94%9F%E7%89%A9%E5%AD%A6%E5%85%A5%E9%96%80%E2%80%95%E7%94%9F%E7%89%A9%E7%A4%BE%E4%BC%9A%E3%81%AE%E3%83%80%E3%82%A4%E3%83%8A%E3%83%9F%E3%83%83%E3%82%AF%E3%82%B9%E3%82%92%E6%8E%A2%E3%82%8B-%E5%B7%8C%E4%BD%90-%E5%BA%B8/dp/4320054857/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&keywords=%E6%95%B0%E7%90%86%E7%94%9F%E7%89%A9%E5%AD%A6%E5%85%A5%E9%96%80&qid=1575634765&sr=8-1 "数理生物学入門"
  
 ## DEMO
  
