@@ -7,34 +7,7 @@ from support import BaseFunction
 
  
 
-class LotkaVolterraModel( BaseFunction ):
-    """
-    :param r1, r2 : float : intrinsic rate of natural increase
-    :param K1, K2 : float : carrying capacity
-    :param a      : float : 
-    :param b      : float :
-    :return dx/dt, dy/dt : float
-    """
-    def __init__( self, r = 1,  a = 0.03, b = 0.025, c = 1 ):
-        
-        self.r = r
-        self.a = a
-        self.b = b
-        self.c = c
-       
-
-    def get_values( self, x, y, t ):
-
-        return self.r * x - self.a * x * y, self.b * x * y -self.c * y
-    
-    def get_linelist( self ):
-
-        return [[]]
-    
-    def get_potential( self, x, y ):
-        return None
-
-class LotkaVolterraModel2( BaseFunction ):
+class Lotka_volterra( BaseFunction ):
     """
     :param r1, r2 : float : intrinsic rate of natural increase
     :param K1, K2 : float : carrying capacity
@@ -51,17 +24,37 @@ class LotkaVolterraModel2( BaseFunction ):
         self.a = a
         self.b = b
 
+       
+
     def get_values( self, x, y, t ):
 
         return self.r1 * x * ( 1 - ( x + self.a * y ) /self.K1 ), self.r2 * y * ( 1 - (self.b *  x + y ) / self.K2  )
     
+    def get_linelist( self ):
+
+        return  [[ -1 / self.a, self.K1 / self.a ], [ -self.b, self.K2 ] ]
+    
+    
+
+class Fujita_model( BaseFunction ):
+    
+    def __init__( self,  r = 0.1, a = 0.3, b = 0.1, c = 0.3 ):
+        
+        self.r = r
+        self.a = a
+        self.b = b
+        self.c = c
+
+        
+
+    def get_values( self, x, y, t ):
+
+        return self.r * x * ( 1 - self.a * x - self.b * y), -self.c * y + x 
     
     def get_linelist( self ):
-             
-        return  [[],[]]
-    
-    def get_potential( self, x, y ):
-        return None
+
+        return [ [ - self.a / self.b, 1 / self.b ], [ 1 / self.c, 0 ] ]
+
     
 
 if __name__ == '__main__':
@@ -84,13 +77,12 @@ if __name__ == '__main__':
      
     saveoff = support.offsaving( args.savefigoff )
     
-    graph = { 1: LotkaVolterraModel , 5 : LotkaVolterraModel2 }
+    graph = { 1: Lotka_volterra , 4: Fujita_model}
     
     if ad:
         function = graph[ graph_n ](**ad)
     else:
         function = graph[ graph_n ]()
-    
     linelist =  function.get_linelist()
     
     if llist:
@@ -99,4 +91,4 @@ if __name__ == '__main__':
     
     t, xpoints, ypoints = function.get_values_rungekutta( sp = sp, ep = ep, initial_value = initial_value )
     
-    na.graph_plot( t, xpoints  ,ypoints , chapter = 3 , function = function, hlines = hl, vlines = vl, linelist = linelist , savefigOn = saveoff, graph_n = graph_n, N = 1000, pointplot = pp)
+    na.graph_plot( t, xpoints  ,ypoints , chapter = 2, function = function, hlines = hl, vlines = vl, linelist = linelist , savefigOn = saveoff, graph_n = graph_n, N = 1000, pointplot = pp)
