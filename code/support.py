@@ -3,49 +3,48 @@ import nanalysis as na
 import numpy as np
 
 class BaseFunction(object):
-    
-    def __init__( self, numberofvalues = 2 ):
-        self.xpoints = None
-        self.ypoints = None
-        self.zpoints = None
-        self.t = None
-        
+	def __init__( self, numberofvalues = 2 ):
+		self.xpoints = None
+		self.ypoints = None
+		self.zpoints = None
+		self.t = None
 
-        self.numberofvalues = numberofvalues 
 
-    def get_values_rungekutta( self, sp = 0, ep = 100, initial_value = [0.1, 0.1], numberofvalues = 2 ):
-        if self.numberofvalues == 1:
-            self.t, self.xpoints = na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, numberofvalues = numberofvalues )
-            
-            return  self.t, self.xpoints, None, None
+		self.numberofvalues = numberofvalues 
 
-        elif self.numberofvalues == 2:
-            self.t, self.xpoints, self.ypoints = na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, numberofvalues = numberofvalues )
-            
-            return  self.t, self.xpoints, self.ypoints, None
-        elif self.numberofvalues == 3:
-            self.t, self.xpoints, self.ypoints, self.zpoints= na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, numberofvalues = numberofvalues )
-            return self.t, self.xpoints, self.ypoints, self.zpoints
+	def get_values_rungekutta( self, sp = 0, ep = 100, initial_value = [0.1, 0.1], numberofvalues = 2 ):
+		if self.numberofvalues == 1:
+			self.t, self.xpoints = na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, numberofvalues = numberofvalues )
+	
+			return  self.t, self.xpoints, None, None
+		
+		elif self.numberofvalues == 2:
+			self.t, self.xpoints, self.ypoints = na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, numberofvalues = numberofvalues )
+			return  self.t, self.xpoints, self.ypoints, None
+		
+		elif self.numberofvalues == 3:
+			self.t, self.xpoints, self.ypoints, self.zpoints= na.rungekutta4d( self.get_values, spoint = sp, epoint = ep, initial_value = initial_value, numberofvalues = numberofvalues )
+			return self.t, self.xpoints, self.ypoints, self.zpoints
+	
+	def make_adxrange(self):
+		additionalplots = []
+		xmax = self.xpoints
+		xmin = self.xpoints
+		while isinstance( xmax, list ):
+			xmax = np.amax( self.xpoints )
 
-    def make_adxrange(self):
-        additionalplots = []
-        xmax = self.xpoints
-        xmin = self.xpoints
-        while isinstance( xmax, list ):
+		while isinstance( xmin, list ):
+		   xmin = np.amin( self.xpoints )
 
-           xmax = np.amax( self.xpoints )
+		if xmin > 0:
+			xmin = 0
+		ad_xrange =  np.arange( xmin - 0.1, xmax + 0.1, 0.01 )
+		additionalplots.append( ad_xrange )
 
-        while isinstance( xmin, list ):
-           xmin = np.amin( self.xpoints )
-        
-        if xmin > 0:
-            xmin = 0
-        ad_xrange =  np.arange( xmin - 0.1, xmax + 0.1, 0.01 )
-        additionalplots.append( ad_xrange )
-        
-        return additionalplots
-    def get_linelist( self ):
-        return []
+		return additionalplots
+	def get_linelist( self ):
+     
+		return []
 
 
 def get_base_args():
@@ -65,7 +64,7 @@ def get_base_args():
     ps = argparse.ArgumentParser( description= 'function argument and value' )
 
     ps.add_argument('--spoint', '-sp', type = float, default = 0, help = 'start point')
-    ps.add_argument('--epoint', '-ep', type = float, default = 1, help = 'end point')
+    ps.add_argument('--epoint', '-ep', type = float, default = 10, help = 'end point')
     
     ps.add_argument('--n_epoch', '-n', type = int, help = 'epochs')
     ps.add_argument('--equation_number',  '-e', default = 1, type = int, help = 'equation_number')

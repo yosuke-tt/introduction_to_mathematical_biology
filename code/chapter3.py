@@ -8,54 +8,47 @@ from support import seperatebyN
 
 class LotkaVolterraModel( BaseFunction ):
 
-   def __init__( self, r =  ,  a = 0.03, b = 0.025, c = 1 ):
-        
-        
-        self.r = r
-        self.a = a
-        self.b = b
-        self.c = c
-        self.numberofvalues = 2 
+	def __init__( self, r = 1,  a = 0.03, b = 0.025, c = 1 ):
 
-    def get_values( self, x, y, t ):
-
-        return self.r * x - self.a * x * y, self.b * x * y -self.c * y
+		self.r = r
+		self.a = a
+		self.b = b
+		self.c = c
+		self.numberofvalues = 2 
+	def get_values( self, x, y, t ):
+		return self.r * x - self.a * x * y, self.b * x * y -self.c * y
+	
+	def get_linelist( self ):
+		return [ [ 0, self.r / self.a ], [ self.c / self.b, 0] ]
     
-    def get_linelist( self ):
-
-        return [ [ 0, self.r / self.a ], [ self.c / self.b, 0] ]
-    
-    def get_potential( self, x, y ):
-        return -self.c * np.log( x ) + self.b * x - self.r * np.log( y ) + self.a * y 
+	def get_potential( self, x, y ):
+		return -self.c * np.log( x ) + self.b * x - self.r * np.log( y ) + self.a * y 
 
 class LotkaVolterraModel2( BaseFunction ):
-
-    def __init__( self, r = 0.03, K = 100, h = 0.1 ,a = 0.002, b = 0.012, c = 0.1, numberofvalues = 2 ):
+	
+	def __init__( self, r = 0.03, K = 100, h = 0.1 ,a = 0.002, b = 0.012, c = 0.1, numberofvalues = 2 ):
         
-        self.r = r 
-        self.K = K
-        self.h = h
-        self.a = a
-        self.b = b
-        self.c = c
-        self.numberofvalues = 2  
-
-    def get_values( self, x, y, t ):
-
-        return self.r * x * ( 1 - x /self.K ) - self.a * x * y / ( 1 + self.h * x ), self.b * x * y / ( 1 + self.h * x ) - self.c * y
+		self.r = r 
+		self.K = K
+		self.h = h
+		self.a = a
+		self.b = b
+		self.c = c
+		self.numberofvalues = 2
+	def get_values( self, x, y, t ):
+		return self.r * x * ( 1 - x /self.K ) - self.a * x * y / ( 1 + self.h * x ), self.b * x * y / ( 1 + self.h * x ) - self.c * y
     
     
-    def get_linelist( self ):
+	def get_linelist( self ):
              
-        return  [ [ self.c / (self.b - self.c * self.h), 0 ] ] 
+		return  [ [ self.c / (self.b - self.c * self.h), 0 ] ] 
+	
+	def get_additionalplots(self):
+		adplots = self.make_adxrange()
+			 
+		adplots.append(1 / self.a * ( 1 + self.h * adplots[0] ) * self.r * ( 1 - adplots[0] / self.K ) )
 
-    
-    def get_additionalplots(self):
-        adplots = self.make_adxrange()
-             
-        adplots.append(1 / self.a * ( 1 + self.h * adplots[0] ) * self.r * ( 1 - adplots[0] / self.K ) )
-        
-        return adplots 
+		return adplots 
 
 class BasicPandemicModel( BaseFunction ):
 

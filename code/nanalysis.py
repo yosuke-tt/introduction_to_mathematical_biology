@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from time import sleep
 import support
 from mpl_toolkits.mplot3d import Axes3D
+
 def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 100, initial_value = 1, N = 1000 , numberofvalues = 2 ):
 	
       
@@ -138,6 +139,7 @@ def rungekutta4d( func , argdict = None ,spoint = 0, epoint = 100, initial_value
 
 		return t, xpoints, ypoints, zpoints
 
+
 def float_to_list( f ):
 
 	if not isinstance( f, list ):
@@ -220,8 +222,8 @@ def graph_plot( t, xpoints, ypoints = None, zpoints = None, chapter = 0, functio
 		dx = get_d( xpoints )  
 		dy = get_d( ypoints )
 			
-		y_max, y_min = ( np.max( ypoints )/ 10  - np.max( ypoints )/ 100 ) * 10 + dy , -dy
-		x_max, x_min = ( np.max( xpoints )/ 10  - np.max( xpoints )/ 100 ) * 10 + dx , -dx	
+		y_max, y_min = ( np.max( ypoints )  - np.max( ypoints )/ 10 )  + dy , -dy
+		x_max, x_min = ( np.max( xpoints )  - np.max( xpoints )/ 10 )  + dx , -dx	
 		
 		plt.xlim( xmin = x_min, xmax = x_max )
 		plt.ylim( ymin = y_min, ymax = y_max )
@@ -364,4 +366,26 @@ def graph_plot( t, xpoints, ypoints = None, zpoints = None, chapter = 0, functio
 		ax.plot(x, y, z, marker="o",linestyle='None')
 			
 		plt.show()
+def numbersequence( func, argdict = None, spoint = 0, epoint = 5, initial_value = [ 2 ]  ):
+	
+	t = np.arange( spoint, epoint, 1 )
 
+	xpoints = []
+	for iv in initial_value:
+		
+		xpoint = [ ]
+		x = iv	
+		for tt in t:
+			x = func( x, tt )	
+			xpoint.append( x )
+	
+		xpoints.append( xpoint )
+	
+	return t, xpoints
+
+def graphplot_NS( t, xpoints ):
+
+	for x in xpoints:
+		plt.plot( t, x )
+		plt.scatter( t, x )
+	plt.show()
